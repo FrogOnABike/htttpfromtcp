@@ -19,7 +19,10 @@ func main() {
 
 	fmt.Printf("Reading data from %s\n", inputFilePath)
 	fmt.Println("=====================================")
+	//  L4 code below: still read in 8 byte chunks but print each complete line
 
+	var line string
+	// L3 code below: read 8 bytes at a time and print the string representation of the bytes read
 	for {
 		b := make([]byte, 8, 8)
 		n, err := f.Read(b)
