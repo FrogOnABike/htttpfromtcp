@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 )
 
 const inputFilePath = "messages.txt"
@@ -37,25 +38,28 @@ func main() {
 			fmt.Printf("error: %s\n", err.Error())
 			break
 		}
-		str := string(b[:n])
-		line += str
-		if str[len(str)-1] == '\n' {
-			fmt.Printf("read: %s", line)
-			line = ""
+		parts := strings.Split(string(b[:n]), "\n")
+		line += parts[0]
+		for i := 1; i < len(parts); i++ {
+			fmt.Printf("read: %s\n", parts[i])
+		}
+		if len(parts) > 1 {
+			line = parts[len(parts)-1]
 		}
 	}
-	// L3 code below: read 8 bytes at a time and print the string representation of the bytes read
-	// for {
-	// 	b := make([]byte, 8, 8)
-	// 	n, err := f.Read(b)
-	// 	if err != nil {
-	// 		if errors.Is(err, io.EOF) {
-	// 			break
-	// 		}
-	// 		fmt.Printf("error: %s\n", err.Error())
-	// 		break
-	// 	}
-	// 	str := string(b[:n])
-	// 	fmt.Printf("read: %s\n", str)
-	// }
 }
+
+// L3 code below: read 8 bytes at a time and print the string representation of the bytes read
+// for {
+// 	b := make([]byte, 8, 8)
+// 	n, err := f.Read(b)
+// 	if err != nil {
+// 		if errors.Is(err, io.EOF) {
+// 			break
+// 		}
+// 		fmt.Printf("error: %s\n", err.Error())
+// 		break
+// 	}
+// 	str := string(b[:n])
+// 	fmt.Printf("read: %s\n", str)
+// }
