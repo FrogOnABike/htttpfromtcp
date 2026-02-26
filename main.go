@@ -39,12 +39,13 @@ func main() {
 			break
 		}
 		parts := strings.Split(string(b[:n]), "\n")
-		line += parts[0]
-		for i := 1; i < len(parts); i++ {
-			fmt.Printf("read: %s\n", parts[i])
-		}
-		if len(parts) > 1 {
-			line = parts[len(parts)-1]
+		for i, part := range parts {
+			if i == 0 {
+				line += part
+			} else {
+				fmt.Printf("read: %s\n", line)
+				line = part
+			}
 		}
 	}
 }
