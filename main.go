@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"os"
+	"net"
 	"strings"
 )
 
@@ -45,17 +45,23 @@ func getLinesChannel(f io.ReadCloser) <-chan string {
 }
 
 func main() {
-	f, err := os.Open(inputFilePath)
+	// // Open the file for reading. If the file does not exist, print an error message and exit.
+	// f, err := os.Open(inputFilePath)
+	// if err != nil {
+	// 	log.Fatalf("could not open %s: %s\n", inputFilePath, err)
+	// }
+
+	// fmt.Printf("Reading data from %s\n", inputFilePath)
+	// fmt.Println("=====================================")
+
+	n, err := net.Listen("tcp4", ":42069")
 	if err != nil {
-		log.Fatalf("could not open %s: %s\n", inputFilePath, err)
+		log.Fatalf("could not listen: %s\n", err)
 	}
+	fmt.Printf("Listening on %s\n", n.Addr().String())
+	defer n.Close()
 
-	fmt.Printf("Reading data from %s\n", inputFilePath)
-	fmt.Println("=====================================")
-	//  L4 code below: still read in 8 byte chunks but print each complete line, starting a new line for each line read.
-	//  Each new line should start with "read:"
-	// If the last line does not end with a newline character, print it as well.
-
+	conn, err := n.Accept()
 	lines := getLinesChannel(f)
 	for line := range lines {
 		fmt.Printf("read: %s\n", line)
