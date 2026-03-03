@@ -61,9 +61,20 @@ func main() {
 	fmt.Printf("Listening on %s\n", n.Addr().String())
 	defer n.Close()
 
-	conn, err := n.Accept()
-	lines := getLinesChannel(f)
-	for line := range lines {
-		fmt.Printf("read: %s\n", line)
+	for {
+		conn, err := n.Accept()
+		if err != nil {
+			log.Printf("could not accept connection: %s\n", err)
+			continue
+		}
+		fmt.Printf("Accepted connection from %s\n", conn.RemoteAddr().String())
+		go func() {
+			defer conn.Close()
+			lines := getLinesChannel(conn)
+			for line := range lines {
+				fmt.Println(line)
+			}
+		}()
+		fmt.Println("Connection closed")
 	}
 }
