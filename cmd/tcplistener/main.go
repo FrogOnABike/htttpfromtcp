@@ -74,7 +74,8 @@ func main() {
 			for line := range lines {
 				fmt.Println(line)
 			}
+			fmt.Println("Connection closed")
 		}()
-		fmt.Println("Connection closed")
+
 	}
 }
