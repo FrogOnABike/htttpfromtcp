@@ -53,6 +53,11 @@ func RequestFromReader(reader io.Reader) (*Request, error) {
 		}
 	}
 
+	// Validate the HTTP version is 1.1 as that's all we're supporting in this project
+	if requestLine.HttpVersion != "HTTP/1.1" {
+		return nil, fmt.Errorf("unsupported HTTP version: %s", requestLine.HttpVersion)
+	}
+
 	return &Request{
 		RequestLine: *requestLine,
 	}, nil
