@@ -25,7 +25,7 @@ func parseRequestLine(line string) (*RequestLine, error) {
 	return &RequestLine{
 		Method:        parts[0],
 		RequestTarget: parts[1],
-		HttpVersion:   parts[2],
+		HttpVersion:   strings.Split(parts[2], "/")[1],
 	}, nil
 }
 
@@ -54,7 +54,7 @@ func RequestFromReader(reader io.Reader) (*Request, error) {
 	}
 
 	// Validate the HTTP version is 1.1 as that's all we're supporting in this project
-	if requestLine.HttpVersion != "HTTP/1.1" {
+	if requestLine.HttpVersion != "1.1" {
 		return nil, fmt.Errorf("unsupported HTTP version: %s", requestLine.HttpVersion)
 	}
 
