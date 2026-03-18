@@ -16,18 +16,7 @@ type RequestLine struct {
 	Method        string
 }
 
-// parseRequestLine parses the request line of an HTTP request and returns a RequestLine struct.
-func parseRequestLine(line string) (*RequestLine, error) {
-	parts := strings.Split(line, " ")
-	if len(parts) != 3 {
-		return nil, fmt.Errorf("invalid request line: %s", line)
-	}
-	return &RequestLine{
-		Method:        parts[0],
-		RequestTarget: parts[1],
-		HttpVersion:   strings.Split(parts[2], "/")[1],
-	}, nil
-}
+const crlf = "\r\n"
 
 // RequestFromReader reads an HTTP request from an io.Reader and returns a Request struct.
 func RequestFromReader(reader io.Reader) (*Request, error) {
@@ -60,5 +49,18 @@ func RequestFromReader(reader io.Reader) (*Request, error) {
 
 	return &Request{
 		RequestLine: *requestLine,
+	}, nil
+}
+
+// parseRequestLine parses the request line of an HTTP request and returns a RequestLine struct.
+func parseRequestLine(line string) (*RequestLine, error) {
+	parts := strings.Split(line, " ")
+	if len(parts) != 3 {
+		return nil, fmt.Errorf("invalid request line: %s", line)
+	}
+	return &RequestLine{
+		Method:        parts[0],
+		RequestTarget: parts[1],
+		HttpVersion:   strings.Split(parts[2], "/")[1],
 	}, nil
 }
