@@ -1,9 +1,9 @@
 package request
 
 import (
+	"bytes"
 	"fmt"
 	"io"
-	"strings"
 )
 
 type Request struct {
@@ -24,43 +24,22 @@ func RequestFromReader(reader io.Reader) (*Request, error) {
 	if err != nil {
 		return nil, err
 	}
-	lines := strings.Split(string(req), "\r\n")
-	if len(lines) < 1 {
-		return nil, fmt.Errorf("invalid request: no lines")
-	}
-
 	// Parse the request line
-	requestLine, err := parseRequestLine(lines[0])
+	requestLine, err := parseRequestLine(req)
 	if err != nil {
 		return nil, err
 	}
-
-	// Validate the HTTP method only contains alphabetic characters
-	for _, r := range requestLine.Method {
-		if !('A' <= r && r <= 'Z') && !('a' <= r && r <= 'z') {
-			return nil, fmt.Errorf("invalid HTTP method: %s", requestLine.Method)
-		}
-	}
-
-	// Validate the HTTP version is 1.1 as that's all we're supporting in this project
-	if requestLine.HttpVersion != "1.1" {
-		return nil, fmt.Errorf("unsupported HTTP version: %s", requestLine.HttpVersion)
-	}
-
 	return &Request{
 		RequestLine: *requestLine,
 	}, nil
 }
 
 // parseRequestLine parses the request line of an HTTP request and returns a RequestLine struct.
-func parseRequestLine(line string) (*RequestLine, error) {
-	parts := strings.Split(line, " ")
-	if len(parts) != 3 {
-		return nil, fmt.Errorf("invalid request line: %s", line)
+func parseRequestLine(data []byte) (*RequestLine, error) {
+	idx := bytes.Index(data, []byte(crlf))
+	if idx == -1 {
+		return nil, fmt.Errorf("invalid request: no CRLF found")
 	}
-	return &RequestLine{
-		Method:        parts[0],
-		RequestTarget: parts[1],
-		HttpVersion:   strings.Split(parts[2], "/")[1],
-	}, nil
+	requestLineText := string(data[:idx])
+
 }
